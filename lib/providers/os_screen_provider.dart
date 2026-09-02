@@ -13,8 +13,6 @@ class OsScreenState {
     OsTool? activeTool,
   }) {
     return OsScreenState(
-      // Allow setting to null if needed, though copyWith typically only overrides if non-null.
-      // To properly handle nullable updates in copyWith, we can do:
       activeTool: activeTool,
     );
   }
@@ -27,9 +25,6 @@ class OsScreenNotifier extends Notifier<OsScreenState> {
   }
 
   void setActiveTool(OsTool? tool) {
-    // If we want to allow setting to null, we'd need to create a new state
-    // directly instead of relying solely on the simple copyWith, but we can 
-    // just pass it to the constructor.
     state = OsScreenState(
       activeTool: tool,
     );
@@ -40,3 +35,11 @@ final osScreenProvider = NotifierProvider<OsScreenNotifier, OsScreenState>(() {
   return OsScreenNotifier();
 });
 
+/// The investigation tools available on the OS screen
+const osToolsList = [
+  OsTool(id: 1, name: 'File Explorer', iconData: Icons.folder_outlined),
+  OsTool(id: 2, name: 'Hex Editor', iconData: Icons.data_array),
+  OsTool(id: 3, name: 'Network\nAnalyzer', iconData: Icons.lan_outlined),
+  OsTool(id: 4, name: 'Access\nLogs', iconData: Icons.history),
+  OsTool(id: 5, name: 'Email\nViewer', iconData: Icons.email_outlined),
+];

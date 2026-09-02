@@ -2,7 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum AppScreen {
   messaging,
+  chainOfCustody,
   os,
+  report,
+  scoring,
 }
 
 class GlobalState {
@@ -43,4 +46,3 @@ class GlobalStateNotifier extends Notifier<GlobalState> {
 final globalStateProvider = NotifierProvider<GlobalStateNotifier, GlobalState>(() {
   return GlobalStateNotifier();
 });
-

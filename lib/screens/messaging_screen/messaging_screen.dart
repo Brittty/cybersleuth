@@ -15,7 +15,7 @@ class _MessagingScreenState extends ConsumerState<MessagingScreen> {
 
   void acceptContract(String id) {
     ref.read(globalStateProvider.notifier).setActiveContractId(id);
-    ref.read(globalStateProvider.notifier).setScreen(AppScreen.os);
+    ref.read(globalStateProvider.notifier).setScreen(AppScreen.chainOfCustody);
   }
 
   final currentContractIndex = 0;
@@ -30,27 +30,58 @@ class _MessagingScreenState extends ConsumerState<MessagingScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Text("Messages", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),),
-              ),
-              ...contracts.map((it) {
-              return Container(
-                height: 60,
-                width: double.infinity,
-                margin: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: colorScheme.secondaryContainer,
-                  borderRadius: BorderRadius.circular(8)
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 12,
+                    bottom: 0,
+                    left: 12,
+                    right: 0,
+                  ),
+                  child: Text(
+                    "Messages",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                  ),
                 ),
-                child:Text(it.sender));
-            }).toList()]),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: colorScheme.onSurface.withAlpha(70),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      children: contracts.map((it) {
+                        return Container(
+                          height: 60,
+                          width: double.infinity,
+                          margin: EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 6,
+                          ),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(it.sender),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           Expanded(
             flex: 4,
             child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: const Color.fromARGB(255, 194, 194, 194),
+              ),
+              clipBehavior: Clip.hardEdge,
               child: Column(
                 children: [
                   Expanded(
@@ -71,14 +102,27 @@ class _MessagingScreenState extends ConsumerState<MessagingScreen> {
                               vertical: 12,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.black.withAlpha(150),
-                              borderRadius: BorderRadius.circular(16),
+                              color: colorScheme.secondaryContainer,
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(16),
+                                topRight: Radius.circular(16),
+                                bottomRight: Radius.circular(16),
+                                bottomLeft: Radius.circular(2),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withAlpha(10),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
                             child: Text(
                               chat,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
+                                color: colorScheme.onSecondaryContainer,
                               ),
                             ),
                           ),
@@ -93,7 +137,9 @@ class _MessagingScreenState extends ConsumerState<MessagingScreen> {
                         acceptContract(contracts[currentContractIndex].id);
                       },
                       child: Container(
-                        decoration: BoxDecoration(color: colorScheme.primaryContainer),
+                        decoration: BoxDecoration(
+                          color: colorScheme.primaryContainer,
+                        ),
                         alignment: Alignment.center,
                         width: double.infinity,
                         padding: EdgeInsets.symmetric(
