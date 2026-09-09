@@ -22,9 +22,11 @@ class FileNode {
   /// Returns the full path by walking from root, but for simplicity
   /// we encode path info in the id (e.g., "priya:/home/priya/Documents")
   String get displaySize {
-    if (isDirectory) return '--';
+    if (isDirectory) return 'Folder';
     if (sizeBytes < 1024) return '$sizeBytes B';
-    if (sizeBytes < 1024 * 1024) return '${(sizeBytes / 1024).toStringAsFixed(1)} KB';
+    if (sizeBytes < 1024 * 1024) {
+      return '${(sizeBytes / 1024).toStringAsFixed(1)} KB';
+    }
     return '${(sizeBytes / (1024 * 1024)).toStringAsFixed(1)} MB';
   }
 }

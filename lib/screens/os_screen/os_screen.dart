@@ -1,4 +1,4 @@
-import 'package:cyber_sleuth/assets/contracts/contract_01.dart';
+import 'package:cyber_sleuth/providers/contract_provider.dart';
 import 'package:cyber_sleuth/models/disk_image_model.dart';
 import 'package:cyber_sleuth/providers/investigation_provider.dart';
 import 'package:cyber_sleuth/providers/os_screen_provider.dart';
@@ -8,6 +8,7 @@ import 'package:cyber_sleuth/screens/os_screen/tools/email_viewer_tool.dart';
 import 'package:cyber_sleuth/screens/os_screen/tools/file_explorer_tool.dart';
 import 'package:cyber_sleuth/screens/os_screen/tools/hex_editor_tool.dart';
 import 'package:cyber_sleuth/screens/os_screen/tools/network_analyzer_tool.dart';
+import 'package:cyber_sleuth/screens/os_screen/tools/notepad_tool.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,7 +25,7 @@ class _OsScreenState extends ConsumerState<OsScreen> {
   @override
   void initState() {
     super.initState();
-    final contract = InsiderThreatContract();
+    final contract = ref.read(activeContractProvider);
     _disks = contract.caseData!.diskImages;
   }
 
@@ -52,10 +53,10 @@ class _OsScreenState extends ConsumerState<OsScreen> {
           diskId: disk.diskId,
         );
       case 5:
-        return EmailViewerTool(
-          emails: disk.emailRecords,
-          diskId: disk.diskId,
-        );
+        return EmailViewerTool(emails: disk.emailRecords, diskId: disk.diskId);
+      case 6:
+        final caseId = ref.watch(activeContractProvider).id;
+        return NotepadTool(key: ValueKey(caseId), caseId: caseId);
       default:
         return _buildWelcomeView();
     }
@@ -67,7 +68,11 @@ class _OsScreenState extends ConsumerState<OsScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.search, size: 64, color: colorScheme.primary.withAlpha(100)),
+          Icon(
+            Icons.search,
+            size: 64,
+            color: colorScheme.primary.withAlpha(100),
+          ),
           const SizedBox(height: 16),
           Text(
             'Select a tool to begin investigation',
@@ -94,7 +99,8 @@ class _OsScreenState extends ConsumerState<OsScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final investigationState = ref.watch(investigationProvider);
-    final selectedDiskId = investigationState.selectedDiskId ?? _disks.first.diskId;
+    final selectedDiskId =
+        investigationState.selectedDiskId ?? _disks.first.diskId;
     final selectedDisk = _disks.firstWhere((d) => d.diskId == selectedDiskId);
 
     return Column(
@@ -102,9 +108,7 @@ class _OsScreenState extends ConsumerState<OsScreen> {
         // Disk selector tabs
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHighest,
-          ),
+          decoration: BoxDecoration(color: colorScheme.surfaceContainerHighest),
           child: Row(
             children: [
               Icon(Icons.sd_storage, size: 16, color: colorScheme.primary),
@@ -132,7 +136,9 @@ class _OsScreenState extends ConsumerState<OsScreen> {
                     borderRadius: BorderRadius.circular(6),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: isActive
                             ? colorScheme.primary
@@ -141,7 +147,8 @@ class _OsScreenState extends ConsumerState<OsScreen> {
                         border: isActive
                             ? null
                             : Border.all(
-                                color: colorScheme.outline.withAlpha(60)),
+                                color: colorScheme.outline.withAlpha(60),
+                              ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,8 +182,7 @@ class _OsScreenState extends ConsumerState<OsScreen> {
               const Spacer(),
               // Evidence count badge
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: colorScheme.primary.withAlpha(30),
                   borderRadius: BorderRadius.circular(12),
@@ -184,8 +190,7 @@ class _OsScreenState extends ConsumerState<OsScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.bookmark,
-                        size: 14, color: colorScheme.primary),
+                    Icon(Icons.bookmark, size: 14, color: colorScheme.primary),
                     const SizedBox(width: 4),
                     Text(
                       '${investigationState.markedEvidence.length} marked',

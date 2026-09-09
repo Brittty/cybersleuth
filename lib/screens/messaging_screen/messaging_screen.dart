@@ -1,4 +1,7 @@
-import 'package:cyber_sleuth/assets/contracts/contract_01.dart';
+import 'package:cyber_sleuth/providers/contract_provider.dart';
+import 'package:cyber_sleuth/providers/chain_of_custody_provider.dart';
+import 'package:cyber_sleuth/providers/investigation_provider.dart';
+import 'package:cyber_sleuth/providers/os_screen_provider.dart';
 import 'package:cyber_sleuth/providers/global_state_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,14 +14,15 @@ class MessagingScreen extends ConsumerStatefulWidget {
 }
 
 class _MessagingScreenState extends ConsumerState<MessagingScreen> {
-  final contracts = [InsiderThreatContract()];
-
   void acceptContract(String id) {
+    ref.invalidate(investigationProvider);
+    ref.invalidate(chainOfCustodyProvider);
+    ref.invalidate(osScreenProvider);
     ref.read(globalStateProvider.notifier).setActiveContractId(id);
     ref.read(globalStateProvider.notifier).setScreen(AppScreen.chainOfCustody);
   }
 
-  final currentContractIndex = 0;
+  int currentContractIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -49,23 +53,40 @@ class _MessagingScreenState extends ConsumerState<MessagingScreen> {
                       color: colorScheme.onSurface.withAlpha(70),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Column(
-                      children: contracts.map((it) {
-                        return Container(
-                          height: 60,
-                          width: double.infinity,
-                          margin: EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 6,
-                          ),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: colorScheme.primary,
+                    child: ListView.builder(
+                      itemCount: contracts.length,
+                      itemBuilder: (context, index) {
+                        final contract = contracts[index];
+                        return Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: Material(
+                            color: currentContractIndex == index
+                                ? colorScheme.primaryContainer
+                                : colorScheme.surface,
                             borderRadius: BorderRadius.circular(8),
+                            child: ListTile(
+                              selected: currentContractIndex == index,
+                              title: Text(
+                                contract.sender,
+                                style: TextStyle(
+                                  color: colorScheme.onPrimaryContainer
+                                      .withAlpha(200),
+                                ),
+                              ),
+                              subtitle: Text(
+                                contract.time,
+                                style: TextStyle(
+                                  color: colorScheme.onPrimaryContainer
+                                      .withAlpha(200),
+                                ),
+                              ),
+                              textColor: colorScheme.onPrimaryContainer,
+                              onTap: () =>
+                                  setState(() => currentContractIndex = index),
+                            ),
                           ),
-                          child: Text(it.sender),
                         );
-                      }).toList(),
+                      },
                     ),
                   ),
                 ),
@@ -146,7 +167,12 @@ class _MessagingScreenState extends ConsumerState<MessagingScreen> {
                           vertical: 16,
                           horizontal: 10,
                         ),
-                        child: Text("Accept Contract"),
+                        child: Text(
+                          "Accept Contract",
+                          style: TextStyle(
+                            color: colorScheme.onPrimaryContainer,
+                          ),
+                        ),
                       ),
                     ),
                   ),

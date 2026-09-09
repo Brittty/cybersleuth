@@ -54,8 +54,7 @@ class _FileExplorerToolState extends ConsumerState<FileExplorerTool> {
           child: Container(
             decoration: BoxDecoration(
               border: Border(
-                right:
-                    BorderSide(color: colorScheme.outline.withAlpha(40)),
+                right: BorderSide(color: colorScheme.outline.withAlpha(40)),
               ),
             ),
             child: Column(
@@ -65,8 +64,11 @@ class _FileExplorerToolState extends ConsumerState<FileExplorerTool> {
                   padding: const EdgeInsets.all(12),
                   child: Row(
                     children: [
-                      Icon(Icons.folder_outlined,
-                          color: colorScheme.primary, size: 20),
+                      Icon(
+                        Icons.folder_outlined,
+                        color: colorScheme.primary,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'File System',
@@ -82,8 +84,12 @@ class _FileExplorerToolState extends ConsumerState<FileExplorerTool> {
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child:
-                        _buildTreeNode(widget.rootDirectory, 0, colorScheme, investigationState),
+                    child: _buildTreeNode(
+                      widget.rootDirectory,
+                      0,
+                      colorScheme,
+                      investigationState,
+                    ),
                   ),
                 ),
               ],
@@ -97,9 +103,11 @@ class _FileExplorerToolState extends ConsumerState<FileExplorerTool> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.touch_app_outlined,
-                          size: 48,
-                          color: colorScheme.onSurface.withAlpha(60)),
+                      Icon(
+                        Icons.touch_app_outlined,
+                        size: 48,
+                        color: colorScheme.onSurface.withAlpha(60),
+                      ),
                       const SizedBox(height: 12),
                       Text(
                         'Select a file to view details',
@@ -111,14 +119,21 @@ class _FileExplorerToolState extends ConsumerState<FileExplorerTool> {
                   ),
                 )
               : _buildFileDetails(
-                  _selectedFile!, colorScheme, investigationState),
+                  _selectedFile!,
+                  colorScheme,
+                  investigationState,
+                ),
         ),
       ],
     );
   }
 
-  Widget _buildTreeNode(FileNode node, int depth, ColorScheme colorScheme,
-      InvestigationState investigationState) {
+  Widget _buildTreeNode(
+    FileNode node,
+    int depth,
+    ColorScheme colorScheme,
+    InvestigationState investigationState,
+  ) {
     final isExpanded = _expandedDirs.contains(node.id);
     final isSelected = _selectedFile?.id == node.id;
     final isMarked = investigationState.isMarked(node.id);
@@ -163,9 +178,7 @@ class _FileExplorerToolState extends ConsumerState<FileExplorerTool> {
                 const SizedBox(width: 4),
                 Icon(
                   node.isDirectory
-                      ? (isExpanded
-                          ? Icons.folder_open
-                          : Icons.folder)
+                      ? (isExpanded ? Icons.folder_open : Icons.folder)
                       : _getFileIcon(node.name),
                   size: 16,
                   color: node.isDirectory
@@ -182,8 +195,9 @@ class _FileExplorerToolState extends ConsumerState<FileExplorerTool> {
                       color: isMarked
                           ? colorScheme.primary
                           : colorScheme.onSurface,
-                      fontWeight:
-                          isMarked ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isMarked
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -195,16 +209,23 @@ class _FileExplorerToolState extends ConsumerState<FileExplorerTool> {
           ),
         ),
         if (node.isDirectory && isExpanded)
-          ...node.children
-              .map((child) =>
-                  _buildTreeNode(child, depth + 1, colorScheme, investigationState))
-              ,
+          ...node.children.map(
+            (child) => _buildTreeNode(
+              child,
+              depth + 1,
+              colorScheme,
+              investigationState,
+            ),
+          ),
       ],
     );
   }
 
   Widget _buildFileDetails(
-      FileNode file, ColorScheme colorScheme, InvestigationState investigationState) {
+    FileNode file,
+    ColorScheme colorScheme,
+    InvestigationState investigationState,
+  ) {
     final isMarked = investigationState.isMarked(file.id);
 
     return Padding(
@@ -215,8 +236,11 @@ class _FileExplorerToolState extends ConsumerState<FileExplorerTool> {
           // File header
           Row(
             children: [
-              Icon(_getFileIcon(file.name),
-                  color: colorScheme.primary, size: 24),
+              Icon(
+                _getFileIcon(file.name),
+                color: colorScheme.primary,
+                size: 24,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -244,9 +268,11 @@ class _FileExplorerToolState extends ConsumerState<FileExplorerTool> {
               children: [
                 _metadataRow('Size', file.displaySize, colorScheme),
                 _metadataRow('Modified', file.lastModified, colorScheme),
-                _metadataRow('Type',
-                    file.isDirectory ? 'Directory' : _getFileType(file.name),
-                    colorScheme),
+                _metadataRow(
+                  'Type',
+                  file.isDirectory ? 'Directory' : _getFileType(file.name),
+                  colorScheme,
+                ),
               ],
             ),
           ),
@@ -254,10 +280,13 @@ class _FileExplorerToolState extends ConsumerState<FileExplorerTool> {
 
           // Content
           if (file.textContent != null) ...[
-            Text('Content',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface)),
+            Text(
+              'Content',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurface,
+              ),
+            ),
             const SizedBox(height: 8),
             Expanded(
               child: Container(
@@ -281,10 +310,13 @@ class _FileExplorerToolState extends ConsumerState<FileExplorerTool> {
               ),
             ),
           ] else if (!file.isDirectory) ...[
-            Text('Binary file — use Hex Editor for detailed analysis',
-                style: TextStyle(
-                    color: colorScheme.onSurface.withAlpha(150),
-                    fontStyle: FontStyle.italic)),
+            Text(
+              'Open this binary file in Hex Editor for analysis.',
+              style: TextStyle(
+                color: colorScheme.onSurface.withAlpha(150),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
           ],
         ],
       ),
@@ -292,16 +324,22 @@ class _FileExplorerToolState extends ConsumerState<FileExplorerTool> {
   }
 
   Widget _evidenceButton(
-      FileNode file, bool isMarked, ColorScheme colorScheme) {
+    FileNode file,
+    bool isMarked,
+    ColorScheme colorScheme,
+  ) {
     return FilledButton.icon(
       onPressed: () {
-        ref.read(investigationProvider.notifier).toggleEvidence(
+        ref
+            .read(investigationProvider.notifier)
+            .toggleEvidence(
               MarkedEvidence(
                 id: file.id,
                 diskId: widget.diskId,
                 category: 'file',
                 title: file.name,
-                description: 'File: ${file.name} (${file.displaySize}, modified ${file.lastModified})',
+                description:
+                    'File: ${file.name} (${file.displaySize}, modified ${file.lastModified})',
               ),
             );
       },
@@ -311,8 +349,9 @@ class _FileExplorerToolState extends ConsumerState<FileExplorerTool> {
         backgroundColor: isMarked
             ? colorScheme.primary
             : colorScheme.surfaceContainerHighest,
-        foregroundColor:
-            isMarked ? colorScheme.onPrimary : colorScheme.onSurface,
+        foregroundColor: isMarked
+            ? colorScheme.onPrimary
+            : colorScheme.onSurface,
       ),
     );
   }
@@ -324,16 +363,22 @@ class _FileExplorerToolState extends ConsumerState<FileExplorerTool> {
         children: [
           SizedBox(
             width: 80,
-            child: Text(label,
-                style: TextStyle(
-                    color: colorScheme.onSurface.withAlpha(150),
-                    fontSize: 12)),
-          ),
-          Text(value,
+            child: Text(
+              label,
               style: TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 12,
-                  color: colorScheme.onSurface)),
+                color: colorScheme.onSurface.withAlpha(150),
+                fontSize: 12,
+              ),
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontFamily: 'monospace',
+              fontSize: 12,
+              color: colorScheme.onSurface,
+            ),
+          ),
         ],
       ),
     );

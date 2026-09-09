@@ -1,4 +1,4 @@
-import 'package:cyber_sleuth/assets/contracts/contract_01.dart';
+import 'package:cyber_sleuth/providers/contract_provider.dart';
 import 'package:cyber_sleuth/models/disk_image_model.dart';
 import 'package:cyber_sleuth/providers/global_state_provider.dart';
 import 'package:cyber_sleuth/providers/investigation_provider.dart';
@@ -18,7 +18,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
   @override
   void initState() {
     super.initState();
-    final contract = InsiderThreatContract();
+    final contract = ref.read(activeContractProvider);
     _disks = contract.caseData!.diskImages;
   }
 
@@ -47,12 +47,17 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                             .read(globalStateProvider.notifier)
                             .setScreen(AppScreen.os);
                       },
-                      icon: Icon(Icons.arrow_back,
-                          color: colorScheme.onSurface),
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: colorScheme.onSurface,
+                      ),
                     ),
                     const SizedBox(width: 8),
-                    Icon(Icons.assignment,
-                        color: colorScheme.primary, size: 28),
+                    Icon(
+                      Icons.assignment,
+                      color: colorScheme.primary,
+                      size: 28,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       'Investigation Report',
@@ -72,18 +77,21 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                       children: [
                         // Section 1: Suspect Selection
                         _sectionHeader(
-                            'Step 1: Identify Suspect Device', colorScheme),
+                          'Step 1: Identify Implicated Device',
+                          colorScheme,
+                        ),
                         const SizedBox(height: 12),
                         Text(
-                          'Select the disk image belonging to the perpetrator:',
+                          'Select the device involved in the incident. Its owner may be a victim.',
                           style: TextStyle(
-                              color: colorScheme.onSurface.withAlpha(180)),
+                            color: colorScheme.onSurface.withAlpha(180),
+                          ),
                         ),
                         const SizedBox(height: 12),
                         ..._disks.map((disk) {
                           final isSelected =
                               investigationState.playerSuspectDiskId ==
-                                  disk.diskId;
+                              disk.diskId;
                           return InkWell(
                             onTap: () {
                               ref
@@ -135,8 +143,10 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                                         : null,
                                   ),
                                   const SizedBox(width: 8),
-                                  Icon(Icons.sd_storage,
-                                      color: colorScheme.primary),
+                                  Icon(
+                                    Icons.sd_storage,
+                                    color: colorScheme.primary,
+                                  ),
                                   const SizedBox(width: 12),
                                   Column(
                                     crossAxisAlignment:
@@ -151,7 +161,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                                         ),
                                       ),
                                       Text(
-                                        '${disk.ownerName} — ${disk.ownerRole}',
+                                        '${disk.ownerName} (${disk.ownerRole})',
                                         style: TextStyle(
                                           color: colorScheme.onSurface
                                               .withAlpha(150),
@@ -169,9 +179,10 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
 
                         // Section 2: Evidence Summary
                         _sectionHeader(
-                            'Step 2: Evidence Summary '
-                            '(${investigationState.markedEvidence.length} items)',
-                            colorScheme),
+                          'Step 2: Evidence Summary '
+                          '(${investigationState.markedEvidence.length} items)',
+                          colorScheme,
+                        ),
                         const SizedBox(height: 12),
                         if (investigationState.markedEvidence.isEmpty)
                           Container(
@@ -182,7 +193,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                             ),
                             child: Center(
                               child: Text(
-                                'No evidence marked. Go back and mark suspicious items.',
+                                'No evidence marked. Go back and mark relevant findings.',
                                 style: TextStyle(
                                   color: colorScheme.onSurface.withAlpha(130),
                                   fontStyle: FontStyle.italic,
@@ -199,12 +210,12 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                                 color: colorScheme.surfaceContainerHighest,
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                  color: colorScheme.outline.withAlpha(30)),
+                                  color: colorScheme.outline.withAlpha(30),
+                                ),
                               ),
                               child: Row(
                                 children: [
-                                  _categoryIcon(
-                                      evidence.category, colorScheme),
+                                  _categoryIcon(evidence.category, colorScheme),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
@@ -216,8 +227,9 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                                             Container(
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                      horizontal: 6,
-                                                      vertical: 2),
+                                                    horizontal: 6,
+                                                    vertical: 2,
+                                                  ),
                                               decoration: BoxDecoration(
                                                 color: colorScheme.primary
                                                     .withAlpha(30),
@@ -229,10 +241,8 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                                                 style: TextStyle(
                                                   fontFamily: 'monospace',
                                                   fontSize: 9,
-                                                  color:
-                                                      colorScheme.primary,
-                                                  fontWeight:
-                                                      FontWeight.bold,
+                                                  color: colorScheme.primary,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
@@ -241,14 +251,11 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                                               child: Text(
                                                 evidence.title,
                                                 style: TextStyle(
-                                                  fontWeight:
-                                                      FontWeight.w600,
+                                                  fontWeight: FontWeight.w600,
                                                   fontSize: 13,
-                                                  color: colorScheme
-                                                      .onSurface,
+                                                  color: colorScheme.onSurface,
                                                 ),
-                                                overflow:
-                                                    TextOverflow.ellipsis,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                           ],
@@ -268,13 +275,14 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                                     ),
                                   ),
                                   IconButton(
-                                    icon: Icon(Icons.remove_circle_outline,
-                                        size: 18,
-                                        color: colorScheme.error),
+                                    icon: Icon(
+                                      Icons.remove_circle_outline,
+                                      size: 18,
+                                      color: colorScheme.error,
+                                    ),
                                     onPressed: () {
                                       ref
-                                          .read(
-                                              investigationProvider.notifier)
+                                          .read(investigationProvider.notifier)
                                           .unmarkEvidence(evidence.id);
                                     },
                                   ),
@@ -286,19 +294,20 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                         const SizedBox(height: 24),
 
                         // Section 3: Timeline
-                        _sectionHeader('Step 3: Reconstructed Timeline (optional)',
-                            colorScheme),
+                        _sectionHeader(
+                          'Step 3: Reconstructed Timeline (optional)',
+                          colorScheme,
+                        ),
                         const SizedBox(height: 12),
                         Text(
-                          'Drag evidence items into chronological order to build the incident timeline. This is optional but provides bonus points.',
+                          'Arrange the key incident events in chronological order. Timeline points depend on both completeness and order. Supporting evidence adds context without a bonus or penalty.',
                           style: TextStyle(
                             color: colorScheme.onSurface.withAlpha(150),
                             fontSize: 12,
                           ),
                         ),
                         const SizedBox(height: 12),
-                        _buildTimelineSection(
-                            investigationState, colorScheme),
+                        _buildTimelineSection(investigationState, colorScheme),
                         const SizedBox(height: 32),
                       ],
                     ),
@@ -309,7 +318,8 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton.icon(
-                    onPressed: investigationState.playerSuspectDiskId != null &&
+                    onPressed:
+                        investigationState.playerSuspectDiskId != null &&
                             investigationState.markedEvidence.isNotEmpty
                         ? () {
                             ref
@@ -322,7 +332,9 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       textStyle: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w600),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -335,13 +347,19 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
   }
 
   Widget _buildTimelineSection(
-      InvestigationState state, ColorScheme colorScheme) {
+    InvestigationState state,
+    ColorScheme colorScheme,
+  ) {
     final available = state.markedEvidence
         .where((e) => !state.playerTimeline.contains(e.id))
         .toList();
     final inTimeline = state.playerTimeline
-        .map((id) => state.markedEvidence.firstWhere((e) => e.id == id,
-            orElse: () => state.markedEvidence.first))
+        .map(
+          (id) => state.markedEvidence.firstWhere(
+            (e) => e.id == id,
+            orElse: () => state.markedEvidence.first,
+          ),
+        )
         .toList();
 
     return Column(
@@ -365,18 +383,21 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                 key: ValueKey(evidence.id),
                 margin: const EdgeInsets.only(bottom: 4),
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 8),
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: colorScheme.primaryContainer.withAlpha(60),
                   borderRadius: BorderRadius.circular(8),
-                  border:
-                      Border.all(color: colorScheme.primary.withAlpha(40)),
+                  border: Border.all(color: colorScheme.primary.withAlpha(40)),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.drag_handle,
-                        size: 16,
-                        color: colorScheme.onSurface.withAlpha(100)),
+                    Icon(
+                      Icons.drag_handle,
+                      size: 16,
+                      color: colorScheme.onSurface.withAlpha(100),
+                    ),
                     const SizedBox(width: 8),
                     Container(
                       width: 24,
@@ -407,8 +428,11 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.remove_circle_outline,
-                          size: 16, color: colorScheme.error),
+                      icon: Icon(
+                        Icons.remove_circle_outline,
+                        size: 16,
+                        color: colorScheme.error,
+                      ),
                       onPressed: () {
                         ref
                             .read(investigationProvider.notifier)
@@ -441,8 +465,7 @@ class _ReportScreenState extends ConsumerState<ReportScreen> {
                 avatar: Icon(Icons.add, size: 14, color: colorScheme.primary),
                 label: Text(
                   evidence.title,
-                  style: TextStyle(
-                      fontSize: 10, color: colorScheme.onSurface),
+                  style: TextStyle(fontSize: 10, color: colorScheme.onSurface),
                 ),
                 onPressed: () {
                   ref

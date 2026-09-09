@@ -35,7 +35,10 @@ class GlobalStateNotifier extends Notifier<GlobalState> {
   }
 
   void setScreen(AppScreen screen) {
-    state = state.copyWith(currentScreen: screen);
+    state = state.copyWith(
+      currentScreen: screen,
+      activeContractId: state.activeContractId,
+    );
   }
 
   void setActiveContractId(String? contractId) {

@@ -10,106 +10,115 @@ class OsTools extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final osState = ref.watch(osScreenProvider);
-    final colorScheme = Theme.of(context).colorScheme;
     final evidenceCount = ref
         .watch(investigationProvider)
         .markedEvidence
         .length;
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 8),
-        // Investigation tools
-        ...osToolsList.map((tool) {
-          final isActive = osState.activeTool?.id == tool.id;
-          return Container(
-            margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 6),
-            decoration: BoxDecoration(
-              color: isActive
-                  ? colorScheme.onPrimary.withAlpha(50)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(8),
-              onTap: () {
-                ref.read(osScreenProvider.notifier).setActiveTool(tool);
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      tool.iconData,
-                      size: 22,
-                      color: isActive
-                          ? colorScheme.surface
-                          : colorScheme.onPrimaryContainer,
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      tool.name,
-                      style: TextStyle(
-                        fontSize: 9,
-                        color: isActive
-                            ? colorScheme.surface
-                            : colorScheme.onPrimaryContainer,
-                        fontWeight: isActive
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.only(top: 8),
+            children: [
+              for (final tool in osToolsList)
+                _AppButton(
+                  label: tool.name,
+                  icon: tool.iconData,
+                  selected: osState.activeTool?.id == tool.id,
+                  onTap: () =>
+                      ref.read(osScreenProvider.notifier).setActiveTool(tool),
                 ),
-              ),
-            ),
-          );
-        }),
+            ],
+          ),
+        ),
+        _AppButton(
+          label: 'Report',
+          icon: Icons.assignment_outlined,
+          badgeCount: evidenceCount,
+          onTap: () => ref
+              .read(globalStateProvider.notifier)
+              .setScreen(AppScreen.report),
+        ),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+}
 
-        const Spacer(),
+class _AppButton extends StatelessWidget {
+  const _AppButton({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+    this.selected = false,
+    this.badgeCount = 0,
+  });
 
-        // Evidence board indicator
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          child: InkWell(
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+  final bool selected;
+  final int badgeCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final foreground = selected ? colors.onPrimary : colors.onPrimaryContainer;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      child: Semantics(
+        button: true,
+        selected: selected,
+        child: Tooltip(
+          message: label.replaceAll('\n', ' '),
+          child: Material(
+            color: selected ? colors.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
-            onTap: () {
-              // Navigate to report screen
-              ref
-                  .read(globalStateProvider.notifier)
-                  .setScreen(AppScreen.report);
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-              child: Column(
-                children: [
-                  Badge(
-                    label: Text('$evidenceCount'),
-                    isLabelVisible: evidenceCount > 0,
-                    child: Icon(
-                      Icons.assignment_outlined,
-                      size: 22,
-                      color: colorScheme.onPrimaryContainer,
-                    ),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: onTap,
+              child: SizedBox(
+                width: double.infinity,
+                height: 72,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 8,
                   ),
-                  const SizedBox(height: 3),
-                  Text(
-                    'Report',
-                    style: TextStyle(
-                      fontSize: 9,
-                      color: colorScheme.onPrimaryContainer,
-                    ),
-                    textAlign: TextAlign.center,
+                  child: Column(
+                    children: [
+                      Badge(
+                        label: Text('$badgeCount'),
+                        isLabelVisible: badgeCount > 0,
+                        child: Icon(icon, size: 22, color: foreground),
+                      ),
+                      const SizedBox(height: 4),
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            label,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 9,
+                              height: 1.2,
+                              fontWeight: FontWeight.w500,
+                              color: foreground,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
         ),
-        const SizedBox(height: 8),
-      ],
+      ),
     );
   }
 }

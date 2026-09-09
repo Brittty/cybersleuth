@@ -73,8 +73,11 @@ class _HexEditorToolState extends ConsumerState<HexEditorTool> {
                   padding: const EdgeInsets.all(12),
                   child: Row(
                     children: [
-                      Icon(Icons.data_array,
-                          color: colorScheme.primary, size: 20),
+                      Icon(
+                        Icons.data_array,
+                        color: colorScheme.primary,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'Files',
@@ -101,7 +104,9 @@ class _HexEditorToolState extends ConsumerState<HexEditorTool> {
                               ? colorScheme.primary.withAlpha(30)
                               : Colors.transparent,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                           child: Row(
                             children: [
                               Icon(
@@ -114,8 +119,7 @@ class _HexEditorToolState extends ConsumerState<HexEditorTool> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       file.name,
@@ -132,17 +136,20 @@ class _HexEditorToolState extends ConsumerState<HexEditorTool> {
                                       file.displaySize,
                                       style: TextStyle(
                                         fontSize: 10,
-                                        color: colorScheme.onSurface
-                                            .withAlpha(100),
+                                        color: colorScheme.onSurface.withAlpha(
+                                          100,
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
                               if (isMarked)
-                                Icon(Icons.bookmark,
-                                    size: 14,
-                                    color: colorScheme.primary),
+                                Icon(
+                                  Icons.bookmark,
+                                  size: 14,
+                                  color: colorScheme.primary,
+                                ),
                             ],
                           ),
                         ),
@@ -161,9 +168,11 @@ class _HexEditorToolState extends ConsumerState<HexEditorTool> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.data_array,
-                          size: 48,
-                          color: colorScheme.onSurface.withAlpha(60)),
+                      Icon(
+                        Icons.data_array,
+                        size: 48,
+                        color: colorScheme.onSurface.withAlpha(60),
+                      ),
                       const SizedBox(height: 12),
                       Text(
                         'Select a file to view hex dump',
@@ -181,7 +190,10 @@ class _HexEditorToolState extends ConsumerState<HexEditorTool> {
   }
 
   Widget _buildHexView(
-      FileNode file, ColorScheme colorScheme, InvestigationState investigationState) {
+    FileNode file,
+    ColorScheme colorScheme,
+    InvestigationState investigationState,
+  ) {
     final isMarked = investigationState.isMarked(file.id);
 
     return Padding(
@@ -206,7 +218,7 @@ class _HexEditorToolState extends ConsumerState<HexEditorTool> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${file.displaySize} • ${file.lastModified}',
+                      'Size: ${file.displaySize}\nModified: ${file.lastModified}',
                       style: TextStyle(
                         color: colorScheme.onSurface.withAlpha(150),
                         fontSize: 12,
@@ -217,27 +229,31 @@ class _HexEditorToolState extends ConsumerState<HexEditorTool> {
               ),
               FilledButton.icon(
                 onPressed: () {
-                  ref.read(investigationProvider.notifier).toggleEvidence(
+                  ref
+                      .read(investigationProvider.notifier)
+                      .toggleEvidence(
                         MarkedEvidence(
                           id: file.id,
                           diskId: widget.diskId,
                           category: 'hex',
                           title: '${file.name} (hex)',
                           description:
-                              'Hex analysis of ${file.name} — ${file.displaySize}',
+                              'Hex analysis of ${file.name} (${file.displaySize})',
                         ),
                       );
                 },
                 icon: Icon(
-                    isMarked ? Icons.bookmark : Icons.bookmark_border,
-                    size: 18),
+                  isMarked ? Icons.bookmark : Icons.bookmark_border,
+                  size: 18,
+                ),
                 label: Text(isMarked ? 'Marked' : 'Mark Evidence'),
                 style: FilledButton.styleFrom(
                   backgroundColor: isMarked
                       ? colorScheme.primary
                       : colorScheme.surfaceContainerHighest,
-                  foregroundColor:
-                      isMarked ? colorScheme.onPrimary : colorScheme.onSurface,
+                  foregroundColor: isMarked
+                      ? colorScheme.onPrimary
+                      : colorScheme.onSurface,
                 ),
               ),
             ],
@@ -249,39 +265,46 @@ class _HexEditorToolState extends ConsumerState<HexEditorTool> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(8)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(8),
+              ),
             ),
             child: Row(
               children: [
                 SizedBox(
                   width: 80,
-                  child: Text('Offset',
-                      style: TextStyle(
-                        fontFamily: 'monospace',
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.primary,
-                      )),
+                  child: Text(
+                    'Offset',
+                    style: TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                    ),
+                  ),
                 ),
                 Expanded(
                   flex: 3,
-                  child: Text('Hexadecimal',
-                      style: TextStyle(
-                        fontFamily: 'monospace',
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.primary,
-                      )),
+                  child: Text(
+                    'Hexadecimal',
+                    style: TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                    ),
+                  ),
                 ),
                 Expanded(
-                  child: Text('ASCII',
-                      style: TextStyle(
-                        fontFamily: 'monospace',
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.primary,
-                      )),
+                  child: Text(
+                    'ASCII',
+                    style: TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -294,8 +317,9 @@ class _HexEditorToolState extends ConsumerState<HexEditorTool> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: const Color(0xFF0D1117),
-                borderRadius:
-                    const BorderRadius.vertical(bottom: Radius.circular(8)),
+                borderRadius: const BorderRadius.vertical(
+                  bottom: Radius.circular(8),
+                ),
               ),
               child: SingleChildScrollView(
                 child: SelectableText(
@@ -320,13 +344,15 @@ class _HexEditorToolState extends ConsumerState<HexEditorTool> {
               decoration: BoxDecoration(
                 color: colorScheme.tertiaryContainer.withAlpha(60),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                    color: colorScheme.tertiary.withAlpha(80)),
+                border: Border.all(color: colorScheme.tertiary.withAlpha(80)),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline,
-                      size: 18, color: colorScheme.tertiary),
+                  Icon(
+                    Icons.info_outline,
+                    size: 18,
+                    color: colorScheme.tertiary,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(

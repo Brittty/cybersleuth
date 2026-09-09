@@ -1,3 +1,4 @@
+import 'package:cyber_sleuth/providers/contract_provider.dart';
 import 'package:cyber_sleuth/models/evidence_model.dart';
 import 'package:cyber_sleuth/models/forensic_models.dart';
 import 'package:cyber_sleuth/providers/investigation_provider.dart';
@@ -34,7 +35,7 @@ class _EmailViewerToolState extends ConsumerState<EmailViewerTool> {
   }
 
   bool _isExternalRecipient(String email) {
-    return !email.endsWith('@novatech.com');
+    return !ref.read(activeContractProvider).caseData!.isInternalEmail(email);
   }
 
   @override
@@ -60,8 +61,11 @@ class _EmailViewerToolState extends ConsumerState<EmailViewerTool> {
                   padding: const EdgeInsets.all(12),
                   child: Row(
                     children: [
-                      Icon(Icons.email_outlined,
-                          color: colorScheme.primary, size: 20),
+                      Icon(
+                        Icons.email_outlined,
+                        color: colorScheme.primary,
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'Inbox',
@@ -89,8 +93,9 @@ class _EmailViewerToolState extends ConsumerState<EmailViewerTool> {
                       final email = widget.emails[index];
                       final isSelected = _selectedEmail?.id == email.id;
                       final isMarked = investigationState.isMarked(email.id);
-                      final hasExternalRecipient =
-                          _isExternalRecipient(email.to);
+                      final hasExternalRecipient = _isExternalRecipient(
+                        email.to,
+                      );
 
                       return InkWell(
                         onTap: () => setState(() {
@@ -99,17 +104,22 @@ class _EmailViewerToolState extends ConsumerState<EmailViewerTool> {
                         }),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 10),
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? colorScheme.primary.withAlpha(20)
                                 : Colors.transparent,
                             border: Border(
                               bottom: BorderSide(
-                                  color: colorScheme.outline.withAlpha(20)),
+                                color: colorScheme.outline.withAlpha(20),
+                              ),
                               left: isMarked
                                   ? BorderSide(
-                                      color: colorScheme.primary, width: 3)
+                                      color: colorScheme.primary,
+                                      width: 3,
+                                    )
                                   : BorderSide.none,
                             ),
                           ),
@@ -133,8 +143,9 @@ class _EmailViewerToolState extends ConsumerState<EmailViewerTool> {
                                     email.timestamp.split(' ')[0],
                                     style: TextStyle(
                                       fontSize: 10,
-                                      color:
-                                          colorScheme.onSurface.withAlpha(120),
+                                      color: colorScheme.onSurface.withAlpha(
+                                        120,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -154,12 +165,13 @@ class _EmailViewerToolState extends ConsumerState<EmailViewerTool> {
                                   if (hasExternalRecipient)
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 4, vertical: 1),
+                                        horizontal: 4,
+                                        vertical: 1,
+                                      ),
                                       margin: const EdgeInsets.only(right: 4),
                                       decoration: BoxDecoration(
                                         color: colorScheme.error.withAlpha(30),
-                                        borderRadius:
-                                            BorderRadius.circular(3),
+                                        borderRadius: BorderRadius.circular(3),
                                       ),
                                       child: Text(
                                         'EXTERNAL',
@@ -171,17 +183,21 @@ class _EmailViewerToolState extends ConsumerState<EmailViewerTool> {
                                       ),
                                     ),
                                   if (email.attachments.isNotEmpty)
-                                    Icon(Icons.attach_file,
-                                        size: 12,
-                                        color: colorScheme.onSurface
-                                            .withAlpha(120)),
+                                    Icon(
+                                      Icons.attach_file,
+                                      size: 12,
+                                      color: colorScheme.onSurface.withAlpha(
+                                        120,
+                                      ),
+                                    ),
                                   if (email.attachments.isNotEmpty)
                                     Text(
                                       ' ${email.attachments.length}',
                                       style: TextStyle(
                                         fontSize: 10,
-                                        color: colorScheme.onSurface
-                                            .withAlpha(120),
+                                        color: colorScheme.onSurface.withAlpha(
+                                          120,
+                                        ),
                                       ),
                                     ),
                                 ],
@@ -205,9 +221,11 @@ class _EmailViewerToolState extends ConsumerState<EmailViewerTool> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.email_outlined,
-                          size: 48,
-                          color: colorScheme.onSurface.withAlpha(60)),
+                      Icon(
+                        Icons.email_outlined,
+                        size: 48,
+                        color: colorScheme.onSurface.withAlpha(60),
+                      ),
                       const SizedBox(height: 12),
                       Text(
                         'Select an email to view',
@@ -219,14 +237,20 @@ class _EmailViewerToolState extends ConsumerState<EmailViewerTool> {
                   ),
                 )
               : _buildEmailDetail(
-                  _selectedEmail!, colorScheme, investigationState),
+                  _selectedEmail!,
+                  colorScheme,
+                  investigationState,
+                ),
         ),
       ],
     );
   }
 
   Widget _buildEmailDetail(
-      EmailRecord email, ColorScheme colorScheme, InvestigationState investigationState) {
+    EmailRecord email,
+    ColorScheme colorScheme,
+    InvestigationState investigationState,
+  ) {
     final isMarked = investigationState.isMarked(email.id);
 
     return Padding(
@@ -249,7 +273,9 @@ class _EmailViewerToolState extends ConsumerState<EmailViewerTool> {
               ),
               FilledButton.icon(
                 onPressed: () {
-                  ref.read(investigationProvider.notifier).toggleEvidence(
+                  ref
+                      .read(investigationProvider.notifier)
+                      .toggleEvidence(
                         MarkedEvidence(
                           id: email.id,
                           diskId: widget.diskId,
@@ -261,15 +287,17 @@ class _EmailViewerToolState extends ConsumerState<EmailViewerTool> {
                       );
                 },
                 icon: Icon(
-                    isMarked ? Icons.bookmark : Icons.bookmark_border,
-                    size: 18),
+                  isMarked ? Icons.bookmark : Icons.bookmark_border,
+                  size: 18,
+                ),
                 label: Text(isMarked ? 'Marked' : 'Mark Evidence'),
                 style: FilledButton.styleFrom(
                   backgroundColor: isMarked
                       ? colorScheme.primary
                       : colorScheme.surfaceContainerHighest,
-                  foregroundColor:
-                      isMarked ? colorScheme.onPrimary : colorScheme.onSurface,
+                  foregroundColor: isMarked
+                      ? colorScheme.onPrimary
+                      : colorScheme.onSurface,
                 ),
               ),
             ],
@@ -286,13 +314,20 @@ class _EmailViewerToolState extends ConsumerState<EmailViewerTool> {
             child: Column(
               children: [
                 _emailFieldRow('From', email.from, colorScheme),
-                _emailFieldRow('To', email.to, colorScheme,
-                    highlight: _isExternalRecipient(email.to)),
+                _emailFieldRow(
+                  'To',
+                  email.to,
+                  colorScheme,
+                  highlight: _isExternalRecipient(email.to),
+                ),
                 _emailFieldRow('Date', email.timestamp, colorScheme),
                 if (email.attachments.isNotEmpty)
                   _emailFieldRow(
-                      'Attachments', email.attachments.join(', '), colorScheme,
-                      highlight: true),
+                    'Attachments',
+                    email.attachments.join(', '),
+                    colorScheme,
+                    highlight: true,
+                  ),
               ],
             ),
           ),
@@ -306,17 +341,13 @@ class _EmailViewerToolState extends ConsumerState<EmailViewerTool> {
               child: Row(
                 children: [
                   Icon(
-                    _showRawHeaders
-                        ? Icons.expand_less
-                        : Icons.expand_more,
+                    _showRawHeaders ? Icons.expand_less : Icons.expand_more,
                     size: 16,
                     color: colorScheme.primary,
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    _showRawHeaders
-                        ? 'Hide Raw Headers'
-                        : 'View Raw Headers',
+                    _showRawHeaders ? 'Hide Raw Headers' : 'View Raw Headers',
                     style: TextStyle(
                       fontSize: 12,
                       color: colorScheme.primary,
@@ -379,8 +410,12 @@ class _EmailViewerToolState extends ConsumerState<EmailViewerTool> {
     );
   }
 
-  Widget _emailFieldRow(String label, String value, ColorScheme colorScheme,
-      {bool highlight = false}) {
+  Widget _emailFieldRow(
+    String label,
+    String value,
+    ColorScheme colorScheme, {
+    bool highlight = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
@@ -402,9 +437,7 @@ class _EmailViewerToolState extends ConsumerState<EmailViewerTool> {
               value,
               style: TextStyle(
                 fontSize: 12,
-                color: highlight
-                    ? colorScheme.error
-                    : colorScheme.onSurface,
+                color: highlight ? colorScheme.error : colorScheme.onSurface,
                 fontWeight: highlight ? FontWeight.bold : FontWeight.normal,
               ),
             ),

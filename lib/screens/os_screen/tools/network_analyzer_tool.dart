@@ -25,9 +25,7 @@ class _NetworkAnalyzerToolState extends ConsumerState<NetworkAnalyzerTool> {
 
   List<NetworkCapture> get _filteredCaptures {
     if (_protocolFilter == 'All') return widget.captures;
-    return widget.captures
-        .where((c) => c.protocol == _protocolFilter)
-        .toList();
+    return widget.captures.where((c) => c.protocol == _protocolFilter).toList();
   }
 
   Set<String> get _protocols {
@@ -71,8 +69,7 @@ class _NetworkAnalyzerToolState extends ConsumerState<NetworkAnalyzerTool> {
           ),
           child: Row(
             children: [
-              Icon(Icons.lan_outlined,
-                  color: colorScheme.primary, size: 20),
+              Icon(Icons.lan_outlined, color: colorScheme.primary, size: 20),
               const SizedBox(width: 8),
               Text(
                 'Network Analyzer',
@@ -82,10 +79,13 @@ class _NetworkAnalyzerToolState extends ConsumerState<NetworkAnalyzerTool> {
                 ),
               ),
               const Spacer(),
-              Text('Protocol: ',
-                  style: TextStyle(
-                      color: colorScheme.onSurface.withAlpha(150),
-                      fontSize: 12)),
+              Text(
+                'Protocol: ',
+                style: TextStyle(
+                  color: colorScheme.onSurface.withAlpha(150),
+                  fontSize: 12,
+                ),
+              ),
               const SizedBox(width: 4),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -134,13 +134,15 @@ class _NetworkAnalyzerToolState extends ConsumerState<NetworkAnalyzerTool> {
               _headerCell('Protocol', 70),
               _headerCell('Length', 80),
               Expanded(
-                child: Text('Info',
-                    style: TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
-                    )),
+                child: Text(
+                  'Info',
+                  style: TextStyle(
+                    fontFamily: 'monospace',
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.primary,
+                  ),
+                ),
               ),
               const SizedBox(width: 40), // for bookmark icon
             ],
@@ -156,32 +158,44 @@ class _NetworkAnalyzerToolState extends ConsumerState<NetworkAnalyzerTool> {
               final isSelected = _selectedCapture?.id == capture.id;
               final isMarked = investigationState.isMarked(capture.id);
               final isExternal =
-                  !capture.destIp.startsWith('10.') && capture.destIp != '127.0.0.1';
+                  !capture.destIp.startsWith('10.') &&
+                  capture.destIp != '127.0.0.1';
 
               return InkWell(
-                onTap: () => setState(() => _selectedCapture =
-                    isSelected ? null : capture),
+                onTap: () => setState(
+                  () => _selectedCapture = isSelected ? null : capture,
+                ),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 6),
+                    horizontal: 16,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? colorScheme.primary.withAlpha(20)
                         : isExternal
-                            ? colorScheme.error.withAlpha(10)
-                            : Colors.transparent,
+                        ? colorScheme.error.withAlpha(10)
+                        : Colors.transparent,
                     border: Border(
                       bottom: BorderSide(
-                          color: colorScheme.outline.withAlpha(20)),
+                        color: colorScheme.outline.withAlpha(20),
+                      ),
                     ),
                   ),
                   child: Row(
                     children: [
-                      _dataCell(capture.timestamp.split(' ').last, 140,
-                          colorScheme),
+                      _dataCell(
+                        capture.timestamp.split(' ').last,
+                        140,
+                        colorScheme,
+                      ),
                       _dataCell(capture.sourceIp, 120, colorScheme),
-                      _dataCell(capture.destIp, 120, colorScheme,
-                          highlight: isExternal),
+                      _dataCell(
+                        capture.destIp,
+                        120,
+                        colorScheme,
+                        highlight: isExternal,
+                      ),
                       _protocolChip(capture.protocol, colorScheme),
                       _dataCell(_formatBytes(capture.bytes), 80, colorScheme),
                       Expanded(
@@ -249,8 +263,12 @@ class _NetworkAnalyzerToolState extends ConsumerState<NetworkAnalyzerTool> {
     );
   }
 
-  Widget _dataCell(String text, double width, ColorScheme colorScheme,
-      {bool highlight = false}) {
+  Widget _dataCell(
+    String text,
+    double width,
+    ColorScheme colorScheme, {
+    bool highlight = false,
+  }) {
     return SizedBox(
       width: width,
       child: Text(
@@ -310,8 +328,11 @@ class _NetworkAnalyzerToolState extends ConsumerState<NetworkAnalyzerTool> {
     );
   }
 
-  Widget _buildDetailPanel(NetworkCapture capture, ColorScheme colorScheme,
-      InvestigationState investigationState) {
+  Widget _buildDetailPanel(
+    NetworkCapture capture,
+    ColorScheme colorScheme,
+    InvestigationState investigationState,
+  ) {
     return Container(
       height: 150,
       padding: const EdgeInsets.all(16),
@@ -328,12 +349,14 @@ class _NetworkAnalyzerToolState extends ConsumerState<NetworkAnalyzerTool> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Packet Details',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSurface,
-                    )),
-                const SizedBox(height: 8),
+                Text(
+                  'Packet Details',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 6),
                 _detailRow('Timestamp', capture.timestamp, colorScheme),
                 _detailRow('Source', capture.sourceIp, colorScheme),
                 _detailRow('Destination', capture.destIp, colorScheme),
@@ -346,11 +369,13 @@ class _NetworkAnalyzerToolState extends ConsumerState<NetworkAnalyzerTool> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Summary',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSurface,
-                    )),
+                Text(
+                  'Summary',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
                 const SizedBox(height: 8),
                 Text(
                   capture.info,
@@ -376,18 +401,22 @@ class _NetworkAnalyzerToolState extends ConsumerState<NetworkAnalyzerTool> {
         children: [
           SizedBox(
             width: 90,
-            child: Text(label,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: colorScheme.onSurface.withAlpha(130),
-                )),
-          ),
-          Text(value,
+            child: Text(
+              label,
               style: TextStyle(
-                fontFamily: 'monospace',
                 fontSize: 11,
-                color: colorScheme.onSurface,
-              )),
+                color: colorScheme.onSurface.withAlpha(130),
+              ),
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontFamily: 'monospace',
+              fontSize: 11,
+              color: colorScheme.onSurface,
+            ),
+          ),
         ],
       ),
     );

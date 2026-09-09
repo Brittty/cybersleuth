@@ -5,16 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class OsScreenState {
   final OsTool? activeTool;
 
-  const OsScreenState({
-    this.activeTool,
-  });
+  const OsScreenState({this.activeTool});
 
-  OsScreenState copyWith({
-    OsTool? activeTool,
-  }) {
-    return OsScreenState(
-      activeTool: activeTool,
-    );
+  OsScreenState copyWith({OsTool? activeTool}) {
+    return OsScreenState(activeTool: activeTool);
   }
 }
 
@@ -25,9 +19,7 @@ class OsScreenNotifier extends Notifier<OsScreenState> {
   }
 
   void setActiveTool(OsTool? tool) {
-    state = OsScreenState(
-      activeTool: tool,
-    );
+    state = OsScreenState(activeTool: tool);
   }
 }
 
@@ -42,4 +34,5 @@ const osToolsList = [
   OsTool(id: 3, name: 'Network\nAnalyzer', iconData: Icons.lan_outlined),
   OsTool(id: 4, name: 'Access\nLogs', iconData: Icons.history),
   OsTool(id: 5, name: 'Email\nViewer', iconData: Icons.email_outlined),
+  OsTool(id: 6, name: 'Notepad', iconData: Icons.edit_note_rounded),
 ];

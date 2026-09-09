@@ -29,9 +29,9 @@ class MyApp extends StatelessWidget {
     const surface = Color(0xFFFFFFFF);
     const surfaceContainer = Color(0xFFF1F3F5);
     const surfaceContainerHighest = Color(0xFFE9ECEF);
-    const primary = Color(0xFF56C98A);
+    const primary = Color(0xFF187347);
     const secondary = Color(0xFF4C6EF5);
-    const error = Color(0xFFFA5252);
+    const error = Color(0xFFBA1A1A);
     const onSurface = Color(0xFF212529);
     const onSurfaceDim = Color(0xFF495057);
     const outline = Color(0xFFCED4DA);
@@ -44,14 +44,13 @@ class MyApp extends StatelessWidget {
         onSurface: onSurface,
         primary: primary,
         onPrimary: Color(0xFFFFFFFF),
-        // primaryContainer: primaryContainer,
+        primaryContainer: Color(0xFFD5F3E1),
         onPrimaryContainer: Color(0xFF0B3B24),
         secondary: secondary,
         onSecondary: Color(0xFFFFFFFF),
-        // secondaryContainer: Color(0xFFDBE4FF),
-        // onSecondaryContainer: Color(0xFF183087),
-        // tertiary: tertiary,
-        // onTertiary: Color(0xFFFFFFFF),
+        secondaryContainer: Color(0xFFDBE4FF),
+        onSecondaryContainer: Color(0xFF183087),
+        onSurfaceVariant: onSurfaceDim,
         error: error,
         onError: Color(0xFFFFFFFF),
         outline: outline,
